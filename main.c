@@ -1,4 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "avl.c"
-#include "bst.c"
+#include "trees.c"
+
+int main()
+{
+
+    return 0;
+}

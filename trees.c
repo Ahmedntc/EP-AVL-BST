@@ -1,54 +1,117 @@
 #include "trees.h"
 
-//funcao geral
 
-void BSTcalculoDeMedias(int qtdArv, double altura, double deltaMedio)
-{
-    double alturaMedia = altura / qtdArv;
-    double tempoMedio = deltaMedio / qtdArv;
+//-----------------------------------------------------MIN MAX---------------------------------------------------------------------------//
+int max(int a, int b) {
+  return (a > b) ? a : b;
 }
 
-void AVLcalculoDeMedias(int qtdArv, double altura, double deltaMedio)
+int min(int a, int b) {
+  return (a < b) ? a : b;
+}
+//-------------------------------------------------FUNÇOES DE CALCULO DE MEDIA DE ALTURA E TEMPO-------------------------------------------------------------------//
+void AVLcalculoDeMedias(double qtdArv, double qtdNos, double altura, double deltaT)
 {
+    printf("\n------------------------------------------------------------\n");
+    printf("\nIniciando teste com %lf Arvores AVL e %lf Elementos em cada", qtdArv, qtdNos);
     double alturaMedia = altura / qtdArv;
-    double tempoMedio = deltaMedio / qtdArv;
+    double tempoMedio = deltaT / qtdArv;
+    printf("\nAltura Media AVL: %lf", alturaMedia);
+    printf("\nTempo medio AVL: %lf\n", tempoMedio);
+    
+
+    BSTbenchmark(qtdArv,  qtdNos);
 }
 
+void BSTcalculoDeMedias(double qtdArv, double qtdNos, double altura, double deltaT)
+{
+    printf("\n------------------------------------------------------------\n");
+    printf("\nIniciando teste com %lf Arvores BST e %lf Elementos em cada", qtdArv, qtdNos);
+    double alturaMedia = altura / qtdArv;
+    double tempoMedio = deltaT / qtdArv;
+    printf("\nAltura Media BST: %lf", alturaMedia );
+    printf("\nTempo medio BST: %lf\n", tempoMedio);
+    
+}
 
+//----------------------------------------BENCHMARKERS---------------------------------------------------------------//
+void treeMeasurer(){
+    double qtdArvore , qtdNos;
+    printf("\nNumero de Arvores para o teste: ");
+    scanf("%lf", &qtdArvore);
+    printf("\nNumero de elemntos para cada arvore: ");
+    scanf("%lf", &qtdNos);
 
+    AVLbenchmark(qtdArvore, qtdNos);
+}
 
-//-------------------------------------------------FUNÇOES PARA  BST--------------------------------------------------------------------//
 void BSTbenchmark(int qtdArv, int qtdNos)
 {
     srand(time(NULL));
     clock_t bstIni, bstEnd;
-    double  deltaT, deltaTotal;
-    double altura, alturaTotal;
-    bstNo *BSTbench;
+    double deltaTotal = 0;
+    double randKey = 0, altura = 0, alturaTotal = 0;
     
-    for(int i = 0; i <= qtdArv; i++)
+    for(int i = 0; i < qtdArv; i++)
     {
+        bstNo *BSTbench;
         bstIni = clock();
-        for(int i = 0; i <= qtdNos; i++)
+        for(int k = 0; k < qtdNos; k++)
         {
-            int randKey = rand();
-            BSTbench = BSTnewNode(randKey);
-            BSTinsertNode(BSTbench, randKey);
+            randKey = rand() % qtdNos + 1;
+            while(BSTsearchElement(BSTbench, randKey) != false){
+                randKey = rand() % qtdNos + 1;
+            }
+            BSTbench = BSTinsertNode(BSTbench, randKey);
         }
         bstEnd = clock();
-
-        deltaT = ((double) (bstEnd - bstIni)/CLOCKS_PER_SEC);
-        deltaTotal += deltaT;
+        deltaTotal += ((double) (bstEnd - bstIni)/CLOCKS_PER_SEC);
 
         altura = BSTgetAltArvore(BSTbench); 
-        alturaTotal += altura;
-
-        BSTcalculoDeMedias(qtdArv, alturaTotal, deltaTotal);
-    } 
+        alturaTotal += altura;   
+    }
+    BSTcalculoDeMedias(qtdArv, qtdNos, alturaTotal, deltaTotal);
 }
 
+void AVLbenchmark(int qtdArv, int qtdNos)
+{
+    srand(time(NULL));
+    clock_t avlIni, avlEnd;
+    double  deltaTotal = 0;
+    double randKey = 0 , altura = 0, alturaTotal = 0;
+    
+    
+    printf("oiii ");
+    for(int i = 0; i <= qtdArv; i++)
+    {
+        avlNo *AVLroot;
+        avlIni = clock();
+        printf("oiii ");
+        for(int k = 0; k <= qtdNos; k++)
+        {
+            randKey = rand() % qtdNos + 1;
+            while(AVLsearchElement(AVLroot, randKey) != false){        
+                randKey = rand() % qtdNos + 1;
+                printf("oiii %lf", randKey);
+            }
+            
+            
+            printf("oiii %lf", randKey);
+            AVLroot = AVLinsertNode(AVLroot, randKey);
+        }
+        avlEnd = clock();
+        deltaTotal += ((double) (avlEnd - avlIni)/CLOCKS_PER_SEC);
+        
+        
+        altura = AVLgetAltArvore(AVLroot); 
+        alturaTotal += altura;  
+    }
+    AVLcalculoDeMedias(qtdArv, qtdNos, alturaTotal, deltaTotal); 
+ }
+//-------------------------------------------------FUNÇOES PARA  BST--------------------------------------------------------------------//
+
 bstNo *BSTnewNode(int key){
-    bstNo *node = (bstNo * )malloc(sizeof(bstNo));
+    bstNo *node = malloc(sizeof(struct bnode));
     node->key = key;
     node->esq = NULL;
     node->dir = NULL;
@@ -58,78 +121,15 @@ bstNo *BSTnewNode(int key){
 
 bstNo *BSTinsertNode(bstNo *node, int key){
     if (node == NULL)
-        return (newNode(key));
+        return (BSTnewNode(key));
     if (key < node->key)
-        node->esq = insertNode(node->esq, key);
+        node->esq = BSTinsertNode(node->esq, key);
     else if (key > node->key)
-        node->dir = insertNode(node->dir, key);
-    else
-        return node;
+        node->dir = BSTinsertNode(node->dir, key);
+    
+    return node;
 }
 
-bstNo *BSTdeleteNode(bstNo *alvo, int key){
-
-    if(alvo==NULL)
-        return NULL;
-    if (key > alvo->key)
-        alvo->dir = BSTdeleteNode(alvo->dir, key);
-    else if(key < alvo->key)
-        alvo->esq = BSTdeleteNode(alvo->esq, key);
-    else
-    {
-        if(alvo->dir==NULL && alvo->esq==NULL)
-        {
-            free(alvo);
-            return NULL;
-        }
-        else if(alvo->esq==NULL || alvo->dir==NULL)
-        {
-            bstNo *aux;
-            if(alvo->esq==NULL)
-                aux = alvo->dir;
-            else
-                aux = alvo->esq;
-            
-            return alvo;
-            free(alvo);
-        }
-        else
-        {
-            bstNo *aux = BSTminValueNode(alvo->dir);
-            alvo->key = aux->key;
-            alvo->dir = BSTdeleteNode(alvo->dir, aux->key);
-        }
-    }
-    return alvo;
-}
-
-void BSTpreOrder(bstNo *root) {
-    if (root != NULL) 
-    {
-        printf("%d ", root->key);
-        preOrder(root->esq);
-        preOrder(root->dir);
-    }
-}
-
-void BSTinOrder(bstNo *root) {
-    if (root != NULL) 
-    {
-        inOrder(root->esq);
-        printf("%d ", root->key);
-        inOrder(root->dir);
-  }
-}
-
-void BSTposOrder(bstNo *root) {
-
-    if (root != NULL) 
-    {
-        posOrder(root->esq);
-        posOrder(root->dir);
-        printf("%d ", root->key);
-    }
-}
 
 bstNo *BSTminValueNode(bstNo*node) {
     bstNo *curr = node;
@@ -145,85 +145,69 @@ bstNo *BSTmaxValueNode(bstNo *node) {
     return curr;
 }
 
-double BSTgetAltArvore(bstNo*node){
-    if(node != NULL)
+double BSTgetAltArvore(bstNo*root){
+    if (root == NULL)
+        return 0;
+    else 
     {
-        int h = 1;
-        while(node->dir !=NULL)
-        {
-            node = node->dir;
-            h++;
-        }    
-        return h;
-    }
-    return 0;    
-}
-
-//-------------------------------------------------FUNÇOES PARA AVL--------------------------------------------------------------//
-void AVLbenchmark(int qtdArv, int qtdNos)
-{
-    srand(time(NULL));
-    clock_t avlIni, avlEnd;
-    double  deltaT, deltaTotal;
-    double altura, alturaTotal;
-    avlNo *AVLbench;
-    
-    for(int i = 0; i <= qtdArv; i++)
-    {
-        avlIni = clock();
-        for(int i = 0; i <= qtdNos; i++)
-        {
-            int randKey = rand();
-            AVLbench = AVLnewNode(randKey);
-            AVLinsertNode(AVLbench, randKey);
-        }
-        avlEnd = clock();
-
-        deltaT = ((double) (avlEnd - avlIni)/CLOCKS_PER_SEC);
-        deltaTotal += deltaT;
-
-        altura = AVLgetAltArvore(AVLbench); 
-        alturaTotal += altura;
-
-        AVLcalculoDeMedias(qtdArv, alturaTotal, deltaTotal);
+        double esqAlt = BSTgetAltArvore(root->esq);
+        double dirAlt = BSTgetAltArvore(root->dir);
+        return max(esqAlt, dirAlt) + 1;    
     } 
+    return 0;
 }
+
+bool BSTsearchElement(bstNo *root, int key){
+    if(root == NULL)
+        return false;
+    if(root->key == key){
+        return true;
+    }
+    else if(root->key < key)
+        BSTsearchElement(root->dir, key);
+    else
+        BSTsearchElement(root->esq, key);   
+}
+//-------------------------------------------------FUNÇOES PARA AVL--------------------------------------------------------------//
 
 
 avlNo *AVLnewNode(int key) {
-    avlNo *node = (avlNo * )malloc(sizeof(avlNo));
+    printf("ola");
+    avlNo *node = malloc(sizeof(struct anode));
     node->key = key;
     node->esq = NULL;
     node->dir = NULL;
-    node->alt;
+    node->alt = 1;
     
     return node;
 }
 
-avlNo *AVLdirRotate(avlNo *y) {
-    avlNo *x = y->esq;
-    avlNo *T2 = x->dir;
+avlNo *AVLdirRotate(avlNo *root) {
+  if (root == NULL) return root;
+  avlNo *x = root->esq;
+  avlNo *T2 = x->dir;
 
-    x->dir = y;
-    y->esq = T2;
+  x->dir = root;
+  root->esq = T2;
 
-    y->alt = AVLnewAlt(y);
-    x->alt = AVLnewAlt(x);
+  root->alt = AVLnewAlt(root);
+  x->alt = AVLnewAlt(x);
 
-    return x;
+  return x;
 }
 
-avlNo *AVLesqRotate(avlNo *x) {
-    avlNo *y = x->dir;
-    avlNo *T2 = y->esq;
+avlNo *AVLesqRotate(avlNo *root) {
+  if (root == NULL) return root;
+  avlNo *x = root->dir;
+  avlNo *T2 = x->esq;
 
-    y->esq = x;
-    x->dir = T2;
+  x->esq = root;
+  root->dir = T2;
 
-    x->alt = AVLnewAlt(x);
-    y->alt = AVLnewAlt(y);
+  root->alt = AVLnewAlt(root);
+  x->alt = AVLnewAlt(x);
 
-    return y;
+  return x;
 }
 
 int AVLgetFb(avlNo *node) {
@@ -242,119 +226,59 @@ int AVLgetAlt(avlNo *node){
     return node->alt;
 }
 
-void AVLrebalance(avlNo *root)
+avlNo *AVLrebalance(avlNo *root)
 {
     int fb = AVLgetFb(root);
-    if (fb > 1 && getfb(root->esq) >= 0)
-        return dirRotate(root);
-
-    if (fb > 1 && getfb(root->esq) < 0) 
-    {
-        root->esq = esqRotate(root->esq);
-        return dirRotate(root);
-    }
-
-    if (fb < -1 && getfb(root->dir) <= 0)
-        return esqRotate(root);
-
-    if (fb < -1 && getfb(root->dir) > 0) 
-    {
-        root->dir = dirRotate(root->dir);
-        return esqRotate(root);
-    }
-
-}
-
-avlNo *AVLinsertNode(avlNo *node, int key) {
-  
-    if (node == NULL)
-        return (AVLnewNode(key));
-    if (key < node->key)
-        node->esq = AVLinsertNode(node->esq, key);
-    else if (key > node->key)
-        node->dir = AVLinsertNode(node->dir, key);
-    else
-        return node;
-
-    node->alt = AVLnewAlt(node);
-    AVLrebalance(node);
-
-    return node;
-}
-
-avlNo *AVLdeleteNode(avlNo *alvo, int key) {
-
-    if (alvo == NULL)
-        return alvo;
-
-    if (key < alvo->key)
-        alvo->esq = AVLdeleteNode(alvo->esq, key);
-
-    else if (key > alvo->key)
-        alvo->dir = AVLdeleteNode(alvo->dir, key);
-
-    else {
-        if ((alvo->esq == NULL) || (alvo->dir == NULL)) 
-        {
-            avlNo *aux = alvo->esq ? alvo->esq : alvo->dir;
-
-            if (aux == NULL) 
-            {
-                aux = alvo;
-                alvo = NULL;
-            }else
-                *alvo = *aux;
-                free(aux);
-        } else 
-        {
-            avlNo *aux = AVLminValueNode(alvo->dir);
-            alvo->key = aux->key;
-            alvo->dir = AVLdeleteNode(alvo->dir, aux->key);
+    if (fb == 2){
+         if(AVLgetFb(root->esq) < 0){
+            root->esq = AVLesqRotate(root);
         }
+        root = AVLdirRotate(root);
     }
-    if (alvo == NULL)
-        return alvo;
-    
-    alvo->alt = AVLnewAlt(alvo);
-    AVLrebalance(alvo);
-
-    return alvo;
-}
-
-void AVLpreOrder(avlNo *root) {
-    if (root != NULL) 
-    {
-        printf("%d ", root->key);
-        preOrder(root->esq);
-        preOrder(root->dir);
+        if (fb == -2){
+         if(AVLgetFb(root->dir) > 0){
+            root->dir = AVLdirRotate(root);
+        }
+        root = AVLesqRotate(root);
     }
+    return root;
+
 }
 
-void AVLinOrder(avlNo *root) {
-    if (root != NULL) 
-    {
-        intPreOrder(root->esq);
-        printf("%d ", root->key);
-        intPreOrder(root->dir);
-  }
-}
-
-void AVLposOrder(avlNo *root) {
-    if (root != NULL) 
-    {
-        posOrder(root->esq);
-        posOrder(root->dir);
-        printf("%d ", root->key);
+avlNo *AVLinsertNode(avlNo *root, int key) {
+    printf("oi1 %d", root->key); 
+    if (root == NULL){
+        return AVLnewNode(key);
     }
+    if (key > root->key){
+        root->dir = AVLinsertNode(root->dir, key);
+    }
+    else if (key < root->key){
+        root->esq = AVLinsertNode(root->esq, key);
+    }
+    else{
+        return root;
+    }
+
+
+    root->alt = AVLnewAlt(root);
+    int fb = AVLgetFb(root);
+
+    if (fb == 2){
+         if(AVLgetFb(root->esq) < 0){
+            root->esq = AVLesqRotate(root);
+        }
+        root = AVLdirRotate(root);
+    }
+        if (fb == -2){
+         if(AVLgetFb(root->dir) > 0){
+            root->dir = AVLdirRotate(root);
+        }
+        root = AVLesqRotate(root);
+    }
+    return root;
 }
 
-int max(int a, int b) {
-  return (a > b) ? a : b;
-}
-
-int min(int a, int b) {
-  return (a < b) ? a : b;
-}
 
 avlNo *AVLminValueNode(avlNo *node) {
     avlNo *curr = node;
@@ -370,10 +294,24 @@ avlNo *AVLmaxValueNode(avlNo *node) {
     return curr;
 }
 
-int AVLgetAltArvore(bstNo*node){
-    int h = 1;
-    while(node->dir !=NULL)
-        node = node->dir;
-        h++;
-    return h;    
+double AVLgetAltArvore(avlNo*root){
+    if (root == NULL)
+        return 0;
+    else 
+    {
+        return max(AVLgetAltArvore(root->dir), AVLgetAltArvore(root->esq)) + 1;    
+    }
+    return 0;
+}
+
+bool AVLsearchElement(avlNo *root, int key){
+    if(root == NULL)
+        return false;
+    if(root->key == key){
+        return true;
+    }
+    else if(root->key < key)
+        return AVLsearchElement(root->dir, key);
+    else
+        return AVLsearchElement(root->esq, key);   
 }

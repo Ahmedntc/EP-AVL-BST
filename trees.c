@@ -2,65 +2,53 @@
 
 
 //-----------------------------------------------------MIN MAX---------------------------------------------------------------------------//
-int max(int a, int b) {
+int Max(int a, int b) {
   return (a > b) ? a : b;
 }
 
-int min(int a, int b) {
-  return (a < b) ? a : b;
-}
 //-------------------------------------------------FUNÇOES DE CALCULO DE MEDIA DE ALTURA E TEMPO-------------------------------------------------------------------//
-void AVLcalculoDeMedias(double qtdArv, double qtdNos, double altura, double deltaT)
+void AVLcalculoDeMedias(int qtdArv, int qtdNos, int altura, double deltaT)
 {
     printf("\n------------------------------------------------------------\n");
     printf("\nIniciando teste com %lf Arvores AVL e %lf Elementos em cada", qtdArv, qtdNos);
-    double alturaMedia = altura / qtdArv;
+    int alturaMedia = altura / qtdArv;
     double tempoMedio = deltaT / qtdArv;
-    printf("\nAltura Media AVL: %lf", alturaMedia);
+    printf("\nAltura Media AVL: %d", alturaMedia);
     printf("\nTempo medio AVL: %lf\n", tempoMedio);
     
 
     BSTbenchmark(qtdArv,  qtdNos);
 }
 
-void BSTcalculoDeMedias(double qtdArv, double qtdNos, double altura, double deltaT)
+void BSTcalculoDeMedias(int qtdArv, int qtdNos, int altura, double deltaT)
 {
     printf("\n------------------------------------------------------------\n");
     printf("\nIniciando teste com %lf Arvores BST e %lf Elementos em cada", qtdArv, qtdNos);
     double alturaMedia = altura / qtdArv;
     double tempoMedio = deltaT / qtdArv;
-    printf("\nAltura Media BST: %lf", alturaMedia );
+    printf("\nAltura Media BST: %d", alturaMedia );
     printf("\nTempo medio BST: %lf\n", tempoMedio);
     
 }
 
 //----------------------------------------BENCHMARKERS---------------------------------------------------------------//
-void treeMeasurer(){
-    double qtdArvore , qtdNos;
-    printf("\nNumero de Arvores para o teste: ");
-    scanf("%lf", &qtdArvore);
-    printf("\nNumero de elemntos para cada arvore: ");
-    scanf("%lf", &qtdNos);
-
-    AVLbenchmark(qtdArvore, qtdNos);
-}
 
 void BSTbenchmark(int qtdArv, int qtdNos)
 {
     srand(time(NULL));
     clock_t bstIni, bstEnd;
     double deltaTotal = 0;
-    double randKey = 0, altura = 0, alturaTotal = 0;
+    int randKey, altura, alturaTotal = 0;
     
     for(int i = 0; i < qtdArv; i++)
     {
-        bstNo *BSTbench;
+        bstNo *BSTbench = NULL;
         bstIni = clock();
         for(int k = 0; k < qtdNos; k++)
         {
-            randKey = rand() % qtdNos + 1;
-            while(BSTsearchElement(BSTbench, randKey) != false){
-                randKey = rand() % qtdNos + 1;
+            randKey = rand() % 900 + 1;
+            while(BSTsearchElement(BSTbench, randKey)){
+                randKey = rand() % 900 + 1;
             }
             BSTbench = BSTinsertNode(BSTbench, randKey);
         }
@@ -78,26 +66,20 @@ void AVLbenchmark(int qtdArv, int qtdNos)
     srand(time(NULL));
     clock_t avlIni, avlEnd;
     double  deltaTotal = 0;
-    double randKey = 0 , altura = 0, alturaTotal = 0;
+    int randKey = 0 , altura = 0, alturaTotal = 0;
     
-    
-    printf("oiii ");
     for(int i = 0; i <= qtdArv; i++)
     {
-        avlNo *AVLroot;
+        avlNo *AVLroot = NULL;
         avlIni = clock();
-        printf("oiii ");
         for(int k = 0; k <= qtdNos; k++)
         {
-            randKey = rand() % qtdNos + 1;
-            while(AVLsearchElement(AVLroot, randKey) != false){        
-                randKey = rand() % qtdNos + 1;
-                printf("oiii %lf", randKey);
+            randKey = rand() % 900 + 1;
+            while(AVLsearchElement(AVLroot, randKey)){        
+                randKey = rand() % 900 + 1;
             }
-            
-            
-            printf("oiii %lf", randKey);
-            AVLroot = AVLinsertNode(AVLroot, randKey);
+            printf("oiii inser %d", randKey);
+            avlNo *AVLroot = AVLinsertNode(AVLroot, randKey);
         }
         avlEnd = clock();
         deltaTotal += ((double) (avlEnd - avlIni)/CLOCKS_PER_SEC);
@@ -105,18 +87,22 @@ void AVLbenchmark(int qtdArv, int qtdNos)
         
         altura = AVLgetAltArvore(AVLroot); 
         alturaTotal += altura;  
+        free(AVLroot);
     }
-    AVLcalculoDeMedias(qtdArv, qtdNos, alturaTotal, deltaTotal); 
+    AVLcalculoDeMedias(qtdArv, qtdNos, alturaTotal, deltaTotal);  
  }
 //-------------------------------------------------FUNÇOES PARA  BST--------------------------------------------------------------------//
 
 bstNo *BSTnewNode(int key){
-    bstNo *node = malloc(sizeof(struct bnode));
-    node->key = key;
-    node->esq = NULL;
-    node->dir = NULL;
-
-    return node;
+    bstNo *node = (bstNo *)malloc(sizeof(bstNo));
+    if (node) {
+        node->key = key;
+        node->esq = NULL;
+        node->dir = NULL;
+        return node;
+    }
+    return NULL;
+    
 }
 
 bstNo *BSTinsertNode(bstNo *node, int key){
@@ -145,14 +131,12 @@ bstNo *BSTmaxValueNode(bstNo *node) {
     return curr;
 }
 
-double BSTgetAltArvore(bstNo*root){
+int BSTgetAltArvore(bstNo*root){
     if (root == NULL)
         return 0;
     else 
     {
-        double esqAlt = BSTgetAltArvore(root->esq);
-        double dirAlt = BSTgetAltArvore(root->dir);
-        return max(esqAlt, dirAlt) + 1;    
+        return Max(BSTgetAltArvore(root->esq), BSTgetAltArvore(root->dir)) + 1;    
     } 
     return 0;
 }
@@ -166,20 +150,23 @@ bool BSTsearchElement(bstNo *root, int key){
     else if(root->key < key)
         BSTsearchElement(root->dir, key);
     else
-        BSTsearchElement(root->esq, key);   
+        BSTsearchElement(root->esq, key);
+    return NULL;   
 }
 //-------------------------------------------------FUNÇOES PARA AVL--------------------------------------------------------------//
 
 
 avlNo *AVLnewNode(int key) {
     printf("ola");
-    avlNo *node = malloc(sizeof(struct anode));
-    node->key = key;
-    node->esq = NULL;
-    node->dir = NULL;
-    node->alt = 1;
-    
-    return node;
+    avlNo *node = (avlNo *)malloc(sizeof(avlNo));
+    if (node) {
+        node->key = key;
+        node->esq = NULL;
+        node->dir = NULL;
+        node->alt = 1;
+        return node;
+    }
+    return NULL;
 }
 
 avlNo *AVLdirRotate(avlNo *root) {
@@ -217,7 +204,7 @@ int AVLgetFb(avlNo *node) {
 }
 
 int AVLnewAlt(avlNo *node){
-    return 1 + max(AVLgetAlt(node->esq), AVLgetAlt(node->dir));
+    return 1 + Max(AVLgetAlt(node->esq), AVLgetAlt(node->dir));
 }
 
 int AVLgetAlt(avlNo *node){
@@ -246,8 +233,8 @@ avlNo *AVLrebalance(avlNo *root)
 }
 
 avlNo *AVLinsertNode(avlNo *root, int key) {
-    printf("oi1 %d", root->key); 
-    if (root == NULL){
+    printf("oi1 %d", key); 
+    if (root == NULL){ 
         return AVLnewNode(key);
     }
     if (key > root->key){
@@ -294,12 +281,12 @@ avlNo *AVLmaxValueNode(avlNo *node) {
     return curr;
 }
 
-double AVLgetAltArvore(avlNo*root){
+int AVLgetAltArvore(avlNo*root){
     if (root == NULL)
         return 0;
     else 
     {
-        return max(AVLgetAltArvore(root->dir), AVLgetAltArvore(root->esq)) + 1;    
+        return Max(AVLgetAltArvore(root->dir), AVLgetAltArvore(root->esq)) + 1;    
     }
     return 0;
 }

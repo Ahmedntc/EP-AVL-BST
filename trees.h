@@ -23,15 +23,15 @@ typedef struct bnode{
 
 //As duas proximas funçoes retornam o minimo e o maximo entre dois valores respectivamente
 
-int min(int a, int b);
 
-int max(int a, int b);
+
+int Max(int a, int b);
 
 
 //calcula a media das alturas e dos tempos de execuçao para bst ou avl
-void AVLcalculoDeMedias(double qtdArv, double qtdNos, double altura, double deltaMedio);
+void AVLcalculoDeMedias(int qtdArv, int qtdNos, int altura, double deltaMedio);
 
-void BSTcalculoDeMedias(double qtdArv, double qtdNos, double altura, double deltaMedio);
+void BSTcalculoDeMedias(int qtdArv, int qtdNos, int altura, double deltaMedio);
 
 //executa as inserçoes dos nos aleatorios
 void BSTbenchmark(int qtdArv, int qtdNos);
@@ -59,12 +59,12 @@ bstNo *BSTminValueNode(bstNo*node);
 bstNo *BSTmaxValueNode(bstNo *node);
 
 //retorna a altura da arvore
-double BSTgetAltArvore(bstNo *root);
+int BSTgetAltArvore(bstNo *root);
 
-double AVLgetAltArvore(avlNo *root);
+int AVLgetAltArvore(avlNo *root);
 
 //busca por um elemento com a chave dada 
- BSTsearchElement(bstNo *root, int key);
+bool BSTsearchElement(bstNo *root, int key);
 
 bool AVLsearchElement(avlNo *root, int key);
 

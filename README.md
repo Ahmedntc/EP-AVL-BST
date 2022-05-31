@@ -17,7 +17,7 @@ Assegurando que as chaves dos nós sejam distintas
     enquanto o retorno da função de busca for diferente de false.
  						    
                             
- Conclusões
+Conclusões
     
     As árvores binárias são uma estrutura de dados que tem como um de seus atrativos 
     o fato da complexidade de tempo de operações ser O(log N) 
@@ -29,4 +29,6 @@ Assegurando que as chaves dos nós sejam distintas
     
     Se tornando mais vantajoso a utilização das AVLs por se manterem muito eficientes em relação a tempo de execução de busca 
     mesmo que não mantenham uma altura perfeita ainda assim uma altura suficientemente boa é mantida.
-    Por outro lado as BST são mais rápidas para inserir números aleatórios por não precisarem executar rebalanceamentos.
+    Por outro lado a construção da BST é mais rápida por não ser necessário a execução de rebalanceamentos ao inserir ou remover os nós de uma árvore.
+
+

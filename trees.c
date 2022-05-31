@@ -24,7 +24,7 @@ void BSTcalculoDeMedias(int qtdArv, int qtdNos, int altura, double deltaT)
 {
     printf("\n------------------------------------------------------------\n");
     printf("\nIniciando teste com %lf Arvores BST e %lf Elementos em cada", qtdArv, qtdNos);
-    double alturaMedia = altura / qtdArv;
+    int alturaMedia = altura / qtdArv;
     double tempoMedio = deltaT / qtdArv;
     printf("\nAltura Media BST: %d", alturaMedia );
     printf("\nTempo medio BST: %lf\n", tempoMedio);
@@ -78,7 +78,6 @@ void AVLbenchmark(int qtdArv, int qtdNos)
             while(AVLsearchElement(AVLroot, randKey)){        
                 randKey = rand() % 900 + 1;
             }
-            printf("oiii inser %d", randKey);
             avlNo *AVLroot = AVLinsertNode(AVLroot, randKey);
         }
         avlEnd = clock();
@@ -157,7 +156,6 @@ bool BSTsearchElement(bstNo *root, int key){
 
 
 avlNo *AVLnewNode(int key) {
-    printf("ola");
     avlNo *node = (avlNo *)malloc(sizeof(avlNo));
     if (node) {
         node->key = key;
@@ -233,7 +231,6 @@ avlNo *AVLrebalance(avlNo *root)
 }
 
 avlNo *AVLinsertNode(avlNo *root, int key) {
-    printf("oi1 %d", key); 
     if (root == NULL){ 
         return AVLnewNode(key);
     }
